@@ -3,9 +3,56 @@
 	xmlns="http://www.springframework.org/schema/beans"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+	<!-- 指定连接数据库的驱动 -->
+	<property name="driverClass" value="com.mysql.jdbc.Driver"> </property>	
+	<!-- 指定连接数据库的URL -->
+	<property name="jdbcUrl" value="jdbc:mysql://localhost/db_ssh?useUnicode=true&amp;characterEncoding=UTF8"></property>
+	<!-- 指定连接数据库的用户名 -->
+	<property name="user" value="root"></property>
+	<!-- 指定连接数据库的密码 -->
+	<property name="password" value="404134355"></property>
+	<!--  指定连接数据库连接池的最大连接数-->
+	<property name="maxPoolSize" value="50"></property>
+	<!-- 指定连接数据库连接池的最小连接数 -->
+	<property name="minPoolSize" value="1"></property>
+	<!-- 指定连接数据库连接池的初始化连接数 -->
+	<property name="initialPoolSize" value="1"></property>
+	<!-- 指定连接数据库连接池的连接的最大空闲时间 -->
+	<property name="maxIdleTime" value="20"></property>
+	</bean>
+	<!-- 指定Hibernate的SessionFactory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<property name="dataSource" ><ref bean="dataSource"></ref></property>
+	<property name="annotatedClasses">
+	<list>
+	<!-- 列出所有的持久化类 -->
+	<value>hibernatetest.Person</value>
+	</list>	
+	</property>
+    <property name="hibernateProperties">
+    <!-- 设置Hibernate属性 -->
+    <props>
+        <prop key="hibernate.dialect"> org.hibernate.dialect.MySQLDialect</prop>
+        <prop key="hibernate.hbm2ddl.auto">update</prop>
+        <prop key="hibernate.show_sql">true</prop>
+        <prop key="hibernate.format_sql">true</prop>
+    </props>
+    </property>	
+	</bean>
+	<!-- 自己需要配置 -->
+	<!-- 注入SessionFactory -->
+	<bean id="baseDao" class="hibernatetest.BaseDao">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	
+	
+	
+	
+	<!--测试spring用到的bean  -->
 	<bean id="chinese" class="springtest.Chinese">
 	<property name="run" ref="run"></property>
 	</bean>
-	
 	<bean id="run" class="springtest.SlowRun"></bean>
 </beans>
